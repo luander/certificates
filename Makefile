@@ -258,6 +258,9 @@ binary-linux:
 binary-darwin:
 	$(call BUNDLE_MAKE,darwin,amd64,$(BINARY_OUTPUT)darwin/)
 
+binary-linux-arm64:
+	$(call BUNDLE_MAKE,linux,arm64,$(BINARY_OUTPUT)linux-arm64/)
+
 define BUNDLE
 	$(q)BUNDLE_DIR=$(BINARY_OUTPUT)$(1)/bundle; \
 	stepName=step-certificates_$(2); \
@@ -277,6 +280,9 @@ endef
 bundle-linux: binary-linux
 	$(call BUNDLE,linux,$(VERSION),amd64)
 
+bundle-linux-arm64: binary-linux-arm64
+	$(call BUNDLE,linux,$(VERSION),arm64)
+
 bundle-darwin: binary-darwin
 	$(call BUNDLE,darwin,$(VERSION),amd64)
 
@@ -288,15 +294,17 @@ bundle-darwin: binary-darwin
 
 artifacts-linux-tag: bundle-linux debian
 
+artifacts-linux-arm64-tag: bundle-linux-arm64
+
 artifacts-darwin-tag: bundle-darwin
 
 artifacts-archive-tag:
 	$Q mkdir -p $(RELEASE)
 	$Q git archive v$(VERSION) | gzip > $(RELEASE)/step-certificates_$(VERSION).tar.gz
 
-artifacts-tag: artifacts-linux-tag artifacts-darwin-tag artifacts-archive-tag
+artifacts-tag: artifacts-linux-tag artifacts-darwin-tag artifacts-archive-tag artifacts-linux-arm64-tag
 
-.PHONY: artifacts-linux-tag artifacts-darwin-tag artifacts-archive-tag artifacts-tag
+.PHONY: artifacts-linux-tag artifacts-darwin-tag artifacts-archive-tag artifacts-tag artifacts-linux-arm64-tag
 
 #################################################
 # Targets for creating step artifacts
